@@ -7,10 +7,10 @@
 # Remove or comment out customer-managed key resources:
 # They require Key Vault with 90-day soft delete retention
 
-/*
+
 # Customer-Managed Key for TDE - DISABLED due to Key Vault constraints
 resource "azurerm_key_vault_key" "sql_tde_key" {
-  name         = "sql-tde-key-\${var.environment}"
+  name         = "sql-tde-key-${var.environment}"
   key_vault_id = var.key_vault_id
   key_type     = "RSA"
   key_size     = 2048
@@ -30,7 +30,7 @@ resource "azurerm_key_vault_key" "sql_tde_key" {
   }
 }
 
-resource "azurerm_mssql_server_transparent_data_encryption" "tde" {
+/*resource "azurerm_mssql_server_transparent_data_encryption" "tde" {
   server_id        = azurerm_mssql_server.healthcare.id
   key_vault_key_id = azurerm_key_vault_key.sql_tde_key.id
 }
