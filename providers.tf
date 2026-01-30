@@ -15,6 +15,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-  use_cli = true
+  use_cli = false
   skip_provider_registration = true  # ADD THIS LINE
 }
