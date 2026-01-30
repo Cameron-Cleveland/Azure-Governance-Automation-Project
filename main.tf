@@ -53,7 +53,7 @@ resource "azurerm_key_vault" "healthcare" {
   purge_protection_enabled   = true  # Disable purge protection
 
   network_acls {
-    default_action = "Allow"
+    default_action = "Deny"
     bypass         = "AzureServices"
   }
 }

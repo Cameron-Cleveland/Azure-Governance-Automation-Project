@@ -77,7 +77,7 @@ resource "azurerm_network_security_group" "healthcare_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
+    source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
   
