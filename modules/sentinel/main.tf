@@ -20,7 +20,7 @@ QUERY
   query_frequency            = "PT1H"
   query_period               = "PT1H"
   trigger_operator           = "GreaterThan"
-  trigger_threshold          = 1cl
+  trigger_threshold          = 1
 
   tactics = ["Collection"]
 }

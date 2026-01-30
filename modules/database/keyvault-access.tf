@@ -24,6 +24,13 @@ resource "azurerm_key_vault_access_policy" "sql_managed_identity" {
   ]
 }
 
+# Output to confirm TDE status
+output "tde_status" {
+  value = "Service-Managed TDE enabled (Key Vault retention: 7 days - insufficient for CMK)"
+  description = "TDE configuration status"
+}
+
+
 # Then update the TDE resource to depend on this
 resource "azurerm_mssql_server_transparent_data_encryption" "tde" {
   server_id        = azurerm_mssql_server.healthcare.id
