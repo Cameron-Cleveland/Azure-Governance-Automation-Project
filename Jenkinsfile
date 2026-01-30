@@ -11,7 +11,7 @@ pipeline {
                 echo 'Pulling Healthcare Infrastructure Code...'
                 git branch: 'main', 
                     credentialsId: 'GITHUB_SCM_AUTH1', 
-                    url: 'https://github.com/Cameron-Cleveland/secure-aws-goverance.git'
+                    url: 'https://github.com/Cameron-Cleveland/Azure-Governance-Automation-Project.git'
             }
         }
 
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running Trivy: Immediate Policy & Landing Zone alignment check...'
-                    // We exit 1 if HIGH/CRITICAL issues are found to fail fast
+                    // Fail the build if HIGH or CRITICAL issues are found
                     sh "trivy config . --severity HIGH,CRITICAL --exit-code 1"
                 }
             }
@@ -46,9 +46,9 @@ pipeline {
 
         stage('Security Deep Dive (Snyk)') {
             steps {
-                withCredentials([string(credentialsId: 'SNYK_TOKEN_TEXT', variable: 'SNYK_TOKEN')]) {
-                    script {
-                        def snykHome = tool 'snyk-cli'
+                script {
+                    def snykHome = tool 'snyk-cli'
+                    withCredentials([string(credentialsId: 'SNYK_TOKEN_TEXT', variable: 'SNYK_TOKEN')]) {
                         echo 'Running Snyk: Deep vulnerability analysis...'
                         sh "${snykHome}/snyk-linux iac test . --token=${SNYK_TOKEN} --severity-threshold=high"
                     }
@@ -58,14 +58,19 @@ pipeline {
 
         stage('Terraform Azure Plan') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'Azure App ID', variable: 'ARM_CLIENT_ID'),
-                    string(credentialsId: 'Azure-Secrets-ID', variable: 'ARM_CLIENT_SECRET'),
-                    string(credentialsId: 'Azure Directory ID', variable: 'ARM_TENANT_ID'),
-                    string(credentialsId: 'azure subscription ID', variable: 'ARM_SUBSCRIPTION_ID')
-                ]) {
-                    script {
-                        sh '''
+                script {
+                    // Pulls the path from Jenkins Global Tool Configuration
+                    def tfHome = tool 'terraform'
+                    
+                    withCredentials([
+                        string(credentialsId: 'Application ID', variable: 'ARM_CLIENT_ID'),
+                        string(credentialsId: 'Azure-Secrets-ID', variable: 'ARM_CLIENT_SECRET'),
+                        string(credentialsId: 'Directory ID', variable: 'ARM_TENANT_ID'),
+                        string(credentialsId: 'azure subscription ID', variable: 'ARM_SUBSCRIPTION_ID')
+                    ]) {
+                        // We add the tfHome/bin directory to the PATH so 'terraform' works
+                        sh """
+                            export PATH=\$PATH:${tfHome}
                             export ARM_CLIENT_ID=$ARM_CLIENT_ID
                             export ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET
                             export ARM_TENANT_ID=$ARM_TENANT_ID
@@ -73,7 +78,7 @@ pipeline {
                             
                             terraform init
                             terraform plan -out=healthcare_plan
-                        '''
+                        """
                     }
                 }
             }
