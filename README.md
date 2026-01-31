@@ -19,134 +19,17 @@ This separation allows for scalable security controls while maintaining the cont
 
 ```mermaid
 graph TB
-    %% ============================================
-    %% TITLE
-    %% ============================================
-    Title["🏥 Azure Healthcare Security Platform - 3-Tier Architecture"]
+    %% Vertical Flow
+    DevSecOps[Jenkins → Security Tools → Terraform] --> 
+    Infrastructure[Azure Landing Zone → Policy → SQL → Key Vault] --> 
+    SecurityOps[Sentinel → Defender → Logic Apps → Azure Boards]
     
-    %% ============================================
-    %% TIER 1: INFRASTRUCTURE & GOVERNANCE (BOTTOM)
-    %% ============================================
-    subgraph Tier1["TIER 1: FOUNDATION - INFRASTRUCTURE & GOVERNANCE"]
-        direction TB
-        
-        %% Core Infrastructure
-        subgraph Infrastructure["Azure Infrastructure"]
-            LandingZone[Azure Landing Zone<br/>Hub & Spoke Architecture]
-            SQL[Azure SQL Database<br/>TDE Encryption]
-            KeyVault[Azure Key Vault<br/>Customer Managed Keys]
-            Storage[Azure Storage<br/>Service Encryption]
-        end
-        
-        %% Governance & Policy
-        subgraph Governance["Compliance & Governance"]
-            AzurePolicy[Azure Policy<br/>HIPAA/HITRUST Baselines]
-            Management[Management Groups<br/>Subscription Governance]
-            Blueprints[Azure Blueprints<br/>Repeatable Environments]
-        end
-        
-        %% Data Protection
-        subgraph DataProtection["Data Protection Layer"]
-            DiskEncrypt[Azure Disk Encryption]
-            Purview[Azure Purview<br/>Data Classification]
-            TDE[Transparent Data Encryption]
-        end
-        
-        %% Connections within tier
-        Governance --> Infrastructure
-        Infrastructure --> DataProtection
-    end
+    SecurityOps --> DevSecOps
     
-    %% ============================================
-    %% TIER 2: DEVSECOPS PIPELINE (MIDDLE)
-    %% ============================================
-    subgraph Tier2["TIER 2: DEVSECOPS - SECURE CI/CD PIPELINE"]
-        direction LR
-        
-        %% Pipeline Flow
-        Jenkins[Jenkins<br/>Pipeline Orchestration] -->
-        SecurityGates[Security Gates] -->
-        Terraform[Terraform<br/>Infrastructure as Code]
-        
-        %% Security Tools Detail
-        subgraph SecurityTools["Security Scanning Tools"]
-            SonarQube[SonarQube<br/>Code Quality & SAST]
-            Snyk[Snyk<br/>Compliance & IaC Scanning]
-            Trivy[Trivy<br/>Vulnerability & Secret Detection]
-        end
-        
-        %% Pipeline to Security Tools Connection
-        SecurityGates --> SecurityTools
-    end
-    
-    %% ============================================
-    %% TIER 3: SECURITY OPERATIONS & MONITORING (TOP)
-    %% ============================================
-    subgraph Tier3["TIER 3: SECURITY - OPERATIONS & MONITORING"]
-        direction LR
-        
-        %% Monitoring & Detection
-        subgraph Monitoring["Threat Detection & SIEM"]
-            Sentinel[Microsoft Sentinel<br/>SIEM/SOAR Platform]
-            KQL[KQL Detection Rules<br/>Healthcare Threats]
-            Defender[Defender for Cloud<br/>CSPM/CWPP]
-        end
-        
-        %% Response & Automation
-        subgraph Response["Incident Response & Automation"]
-            LogicApps[Logic Apps<br/>Automated Playbooks]
-            Automation[Azure Automation<br/>Evidence Collection]
-            Update[Update Manager<br/>Patch Management]
-        end
-        
-        %% Compliance & Reporting
-        subgraph Compliance["Compliance & Reporting"]
-            Workbooks[Azure Workbooks<br/>Compliance Dashboards]
-            PowerBI[Power BI<br/>Vulnerability Trends]
-            Boards[Azure Boards<br/>Remediation Tracking]
-        end
-        
-        %% Connections within tier
-        Monitoring --> Response
-        Response --> Compliance
-    end
-    
-    %% ============================================
-    %% CONNECTIONS BETWEEN TIERS
-    %% ============================================
-    Tier2 -->|"Deploys Secure<br/>Infrastructure"| Tier1
-    Tier1 -->|"Sends Logs &<br/>Security Events"| Tier3
-    Tier3 -->|"Triggers Security<br/>Improvements"| Tier2
-    
-    %% Cross-Tier Connections
-    Defender -.->|"Vulnerability<br/>Assessments"| Boards
-    AzurePolicy -.->|"Enforces<br/>Compliance"| SecurityGates
-    Sentinel -.->|"Incident<br/>Triggers"| LogicApps
-    Automation -.->|"Evidence<br/>Collection"| Workbooks
-    
-    %% ============================================
-    %% COMPLIANCE OVERLAY
-    %% ============================================
-    ComplianceLayer["HIPAA/HITRUST<br/>Compliance Framework"]
-    
-    Tier1 -.->|"Governance &<br/>Data Protection"| ComplianceLayer
-    Tier2 -.->|"Secure SDLC &<br/>Shift-Left Security"| ComplianceLayer
-    Tier3 -.->|"Monitoring &<br/>Audit Automation"| ComplianceLayer
-
-    %% ============================================
-    %% STYLING
-    %% ============================================
-    classDef tier1 fill:#f0fff4,stroke:#2e7d32,stroke-width:2px
-    classDef tier2 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    classDef tier3 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    classDef title fill:#1a237e,color:#ffffff,stroke:#1a237e
-    classDef compliance fill:#f3e8ff,stroke:#7c3aed,stroke-width:2px
-    
-    class Tier1 tier1
-    class Tier2 tier2
-    class Tier3 tier3
-    class Title title
-    class ComplianceLayer compliance
+    Compliance[HIPAA/HITRUST Compliance]
+    DevSecOps -.-> Compliance
+    Infrastructure -.-> Compliance
+    SecurityOps -.-> Compliance
 ```
 
 ## Project Structure
