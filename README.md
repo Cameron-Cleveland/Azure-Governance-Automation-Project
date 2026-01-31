@@ -1,5 +1,3 @@
-Here is the updated Markdown code for your `README.md`. I have fixed the Mermaid syntax by ensuring the arrows are on the same line as the target nodes, which will allow it to render correctly in VS Code and GitHub.
-
 ```markdown
 # Azure Healthcare Security Platform: HITRUST/HIPAA Compliance
 
