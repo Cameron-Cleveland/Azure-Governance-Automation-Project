@@ -19,21 +19,6 @@ The platform implements a three-tier security architecture that separates concer
 
 This separation allows for scalable security controls while maintaining the continuous improvement loop essential for healthcare compliance.
 
-```mermaid
-graph TB
-    %% Vertical Flow
-    DevSecOps[Jenkins → Security Tools → Terraform] --> Infrastructure[Azure Landing Zone → Policy → SQL → Key Vault]
-    Infrastructure --> SecurityOps[Sentinel → Defender → Logic Apps → Azure Boards]
-    
-    SecurityOps --> DevSecOps
-    
-    Compliance[HIPAA/HITRUST Compliance]
-    DevSecOps -.-> Compliance
-    Infrastructure -.-> Compliance
-    SecurityOps -.-> Compliance
-
-```
-
 ## Project Structure
 
 ```
